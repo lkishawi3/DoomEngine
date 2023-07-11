@@ -27,10 +27,6 @@ public class WadFile {
 
     public WadFile(String filename) throws IOException {
         loadWadFile(filename);
-
-
-
-
     }
 
     private void loadWadFile(String filename) throws IOException {
