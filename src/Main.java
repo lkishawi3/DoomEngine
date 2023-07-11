@@ -13,7 +13,8 @@ public class Main {
             byte[] spriteData = null;
             byte[] paletteData = null;
             for (WadDirectoryEntry entry : wadFile.getDirectory()) {
-                if (entry.getName().equals("TROOA1")) {
+                System.out.println(entry.getName());
+                if (entry.getName().equals("SARGA1")) {
                     spriteData = wadFile.getLumpData(entry);
                 } else if (entry.getName().equals("PLAYPAL")) {
                     paletteData = wadFile.getLumpData(entry);
