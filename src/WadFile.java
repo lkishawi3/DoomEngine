@@ -2,6 +2,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class WadFile {
@@ -9,6 +10,7 @@ public class WadFile {
     private List<WadDirectoryEntry> directory;
     // We'll just store the lump data as raw bytes for now
     private List<byte[]> lumps;
+    private Level level;
 
     // add constructors, getters, setters, etc...
 
@@ -20,6 +22,26 @@ public class WadFile {
             return null;
         }
     }
+
+    public byte[] getLumpData(String lumpName) {
+        byte[] data = null;
+        for (WadDirectoryEntry entry : directory) {
+            if (entry.getName().equalsIgnoreCase(lumpName)) {
+                int index = directory.indexOf(entry);
+                if (index >= 0 && index < lumps.size()) {
+                    data = lumps.get(index);
+                    System.out.println("Retrieved lump data for: " + lumpName);
+                    break;
+                }
+            }
+        }
+
+        if (data == null) {
+            System.out.println("Failed to retrieve lump data for: " + lumpName);
+        }
+        return data;
+    }
+
 
     public List<WadDirectoryEntry> getDirectory() {
         return directory;
@@ -61,6 +83,8 @@ public class WadFile {
         }
 
         file.close();
+
+        level = new Level(lumps.get(0));
     }
 
     private String readString(RandomAccessFile file, int length) throws IOException {
@@ -72,6 +96,11 @@ public class WadFile {
     private int readInt(RandomAccessFile file) throws IOException {
         return Integer.reverseBytes(file.readInt());
     }
+
+    public WadHeader getHeader() {
+        return header;
+    }
+
 
     // add getters for header, directory, and lumps...
 }
@@ -117,7 +146,9 @@ class WadDirectoryEntry {
     private String name;
 
     // Constructor
-    public WadDirectoryEntry() {}
+    public WadDirectoryEntry() {
+
+    }
 
     // Getters
     public int getOffset() {

@@ -2,12 +2,11 @@ import java.io.IOException;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class Main {
+public class SpriteRenderer {
     public static void main(String[] args) {
         try {
             WadFile wadFile = new WadFile("src/DOOM1.WAD");
@@ -78,8 +77,9 @@ public class Main {
 
                 // Scroll pane to hold the sprite panel
                 JScrollPane scrollPane = new JScrollPane(spritePanel);
-                scrollPane.setPreferredSize(new Dimension(800, 600));
-
+                scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+                scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+                scrollPane.getViewport().setPreferredSize(spritePanel.getPreferredSize());
                 // Window
                 JFrame frame = new JFrame("Doom Sprites");
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
