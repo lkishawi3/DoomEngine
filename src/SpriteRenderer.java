@@ -1,8 +1,9 @@
 import java.io.IOException;
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
 
 
@@ -10,7 +11,7 @@ public class SpriteRenderer {
     public static void main(String[] args) {
         try {
             WadFile wadFile = new WadFile("src/DOOM1.WAD");
-            List<byte[]> spriteDataList = new ArrayList<>();
+            Map<String, byte[]> spriteDataMap = new LinkedHashMap<>();
             byte[] paletteData = null;
 
             for (WadDirectoryEntry entry : wadFile.getDirectory()) {
@@ -20,18 +21,21 @@ public class SpriteRenderer {
                 } else if (entry.getName().startsWith("TROO")) {
                     byte[] spriteData = wadFile.getLumpData(entry);
                     if (spriteData != null) {
-                        spriteDataList.add(spriteData);
+                        spriteDataMap.put(entry.getName(), spriteData);
                     }
                 }
             }
-            if (!spriteDataList.isEmpty() && paletteData != null) {
+            if (!spriteDataMap.isEmpty() && paletteData != null) {
                 // Create a panel to hold the sprites
                 int horizontalGap = 0;
                 int verticalGap = 0;
                 JPanel spritePanel = new JPanel(new GridLayout(0, 5, horizontalGap, verticalGap));
 
                 //Iterate over each sprite data
-                for(byte[] spriteData : spriteDataList) {
+                for(Map.Entry<String, byte[]> spriteEntry : spriteDataMap.entrySet()) {
+                    String spriteName = spriteEntry.getKey();
+                    byte[] spriteData = spriteEntry.getValue();
+
                     // Parse the sprite header
                     int width = Byte.toUnsignedInt(spriteData[0]) | (Byte.toUnsignedInt(spriteData[1]) << 8);
                     int height = Byte.toUnsignedInt(spriteData[2]) | (Byte.toUnsignedInt(spriteData[3]) << 8);
@@ -70,10 +74,13 @@ public class SpriteRenderer {
                     BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
                     image.setRGB(0, 0, width, height, spritePixels, 0, width);
 
+
                     //Create a label with the sprite image and add it to the panel
-                    JLabel spriteLabel = new JLabel(new ImageIcon(image));
+                    JLabel spriteLabel = new JLabel(spriteName);
+                    spriteLabel.setIcon(new ImageIcon(image));
                     spritePanel.add(spriteLabel);
                 }
+
 
                 // Scroll pane to hold the sprite panel
                 JScrollPane scrollPane = new JScrollPane(spritePanel);
