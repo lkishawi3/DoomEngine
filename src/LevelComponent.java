@@ -12,6 +12,27 @@ public class LevelComponent extends JComponent {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
+        int[][] grid = level.getGrid();
+        for (int x = 0; x < grid.length; x++) {
+            for (int y = 0; y < grid.length; y++) {
+                if (grid[x][y] == 0) {
+                    g.setColor(Color.WHITE);
+                } else if (grid[x][y] == 1) {
+                    g.setColor(Color.BLACK);
+                } else {
+                    g.setColor(Color.GRAY);
+                }
+
+
+
+                g.fillRect(x * 5, y * 5, 5, 5);
+            }
+        }
+    }
+}
+
+   /*
+
         // Draw the LINEDEFS
         g.setColor(Color.RED);
         for (Level.Linedef linedef : level.getLinedefs()) {
@@ -87,10 +108,9 @@ public class LevelComponent extends JComponent {
                 // Draw a circle for the thing
                 g.fillOval(x - 5, y - 5, 10, 10);
             }*/
-            }
-        }
-    }
-}
+
+   // }
+//}
 
 
 

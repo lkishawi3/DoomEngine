@@ -1,5 +1,8 @@
 import javax.swing.JFrame;
 import java.io.IOException;
+import java.util.Optional;
+import java.util.stream.Stream;
+
 
 public class DoomViewer {
     public static void main(String[] args) {
@@ -20,10 +23,12 @@ public class DoomViewer {
             System.out.println("Lump name: " + entry.toString());
         }*/
 
+
         // Create a Level instance
         Level level;
         try {
             level = new Level(wadFile, "E1M1");
+            level.generateGrid(10);
             System.out.println("Level created successfully!");
             System.out.println("Level things: " + level.getThings());
         } catch (Exception e) {

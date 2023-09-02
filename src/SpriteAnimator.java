@@ -6,6 +6,7 @@ import java.util.*;
 import java.io.IOException;
 import java.util.List;
 
+
 public class SpriteAnimator extends JPanel {
 
     private Map<String, List<BufferedImage>> spriteSequences;
@@ -16,6 +17,9 @@ public class SpriteAnimator extends JPanel {
     private JButton nextSequenceButton;
     private int maxWidth;
     private int maxHeight;
+    boolean animationDirection = true;
+
+
 
     public SpriteAnimator(Map<String, List<BufferedImage>> spriteSequences, int animationDelay) {
         this.spriteSequences = spriteSequences;
@@ -34,7 +38,10 @@ public class SpriteAnimator extends JPanel {
         }
 
         this.timer = new Timer(animationDelay, e -> {
-            currentSpriteIndex = (currentSpriteIndex + 1) % spriteSequences.get(currentSequenceName).size();
+            currentSpriteIndex--;
+            if (currentSpriteIndex < 0) {
+                currentSpriteIndex = spriteSequences.get(currentSequenceName).size() - 1;
+            }
             repaint();
         });
         timer.start();
@@ -47,7 +54,9 @@ public class SpriteAnimator extends JPanel {
             repaint();
         });
         this.add(nextSequenceButton);
+
     }
+
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -59,11 +68,11 @@ public class SpriteAnimator extends JPanel {
         int scaledWidth = currentSprite.getWidth() * scale;
         int scaledHeight = currentSprite.getHeight() * scale;
 
-        int x = (getWidth() - currentSprite.getWidth()) / 4 + 40;
-        int y = (getHeight() - currentSprite.getHeight()) / 4 - 50;
+        int x = (maxWidth - scaledWidth) / 2 + 370;
+        int y = (maxHeight - scaledHeight) / 2 + 300;
 
         Graphics2D g2d = (Graphics2D) g;
-        g2d.drawImage(currentSprite, x, y, scaledWidth, scaledHeight, null);
+        g2d.drawImage(currentSprite, x, y, scaledWidth, scaledHeight,  null);
     }
 
     @Override
@@ -107,6 +116,19 @@ public class SpriteAnimator extends JPanel {
                 lumpToSequence.put("TROOE5", "sequence8");
                 lumpToSequence.put("TROOF5", "sequence8");
                 lumpToSequence.put("TROOG5", "sequence8");
+                lumpToSequence.put("TROOI0", "sequence9");
+                lumpToSequence.put("TROOJ0", "sequence9");
+                lumpToSequence.put("TROOK0", "sequence9");
+                lumpToSequence.put("TROOL0", "sequence9");
+                lumpToSequence.put("TROOM0", "sequence9");
+                lumpToSequence.put("TROON0", "sequence10");
+                lumpToSequence.put("TROOO0", "sequence10");
+                lumpToSequence.put("TROOP0", "sequence10");
+                lumpToSequence.put("TROOQ0", "sequence10");
+                lumpToSequence.put("TROOR0", "sequence10");
+                lumpToSequence.put("TROOS0", "sequence10");
+                lumpToSequence.put("TROOT0", "sequence10");
+                lumpToSequence.put("TROOU0", "sequence10");
 
                 for (WadDirectoryEntry entry : wadFile.getDirectory()) {
                     System.out.println(entry.getName());
@@ -183,7 +205,7 @@ public class SpriteAnimator extends JPanel {
                     JFrame frame = new JFrame("Doom Sprite Animator");
                     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                     frame.getContentPane().add(spriteAnimator);
-                    frame.setPreferredSize(new Dimension(800, 800));
+                    frame.setPreferredSize(new Dimension(800, 700));
                     frame.pack();
                     frame.setLocationRelativeTo(null);
 

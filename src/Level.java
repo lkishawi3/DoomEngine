@@ -1,7 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class Level {
     private List<Thing> things;
     private List<Linedef> linedefs;
@@ -10,6 +9,7 @@ public class Level {
     private List<Sector> sectors;
     private int maxX;
     private int maxY;
+    private int[][] grid;
     // other data structures...
 
     public Level(byte[] thingsData) {
@@ -79,8 +79,8 @@ public class Level {
     private List<Vertex> parseVertexes(byte[] data) {
         List<Vertex> vertexes = new ArrayList<>();
         for (int i = 0; i < data.length; i += 4) {
-            int x = Byte.toUnsignedInt(data[i]) | (Byte.toUnsignedInt(data[i + 1]) << 8);
-            int y = Byte.toUnsignedInt(data[i + 2]) | (Byte.toUnsignedInt(data[i + 3]) << 8);
+            int x = Byte.toUnsignedInt(data[i]) | (Byte.toUnsignedInt(data[i + 1]) << 8) / 1000;
+            int y = Byte.toUnsignedInt(data[i + 2]) | (Byte.toUnsignedInt(data[i + 3]) << 8) / 1000;
             vertexes.add(new Vertex(x, y));
         }
         return vertexes;
@@ -103,6 +103,60 @@ public class Level {
 
     public List<Thing> getThings() {
         return things;
+    }
+
+    public void generateGrid(int padding) {
+        // Create the grid with some padding
+        int maxX = getMaxX() + padding;
+        int maxY = getMaxY() + padding;
+        this.grid = new int[maxX][maxY];
+
+        //Initialize the grid with zeros
+        for (int x = 0; x < maxX; x++) {
+            for (int y = 0; y < maxY; y++) {
+                grid[x][y] = 0;
+            }
+        }
+
+        markLinedefs();
+    }
+
+    private void markLinedefs() {
+        for(Linedef linedef : getLinedefs()) {
+            int x0 = linedef.getStartVertex().getX();
+            int y0 = linedef.getStartVertex().getY();
+            int x1 = linedef.getEndVertex().getX();
+            int y1 = linedef.getEndVertex().getY();
+
+            int dx = Math.abs(x1 - x0);
+            int dy = Math.abs(y1 - y0);
+
+            int sx = (x0 < x1) ? 1 : -1;
+            int sy = (y0 < y1) ? 1 : -1;
+
+            int err = dx - dy;
+
+            while (true) {
+                // Mark the current cell as a linedef
+                grid[x0][y0] = 1;
+
+                if (x0 == x1 && y0 == y1) break;
+
+                int e2 = 2 * err;
+                if (e2 > -dy) {
+                    err -= dy;
+                    x0 += sx;
+                }
+                if (e2 < dx) {
+                    err += dx;
+                    y0 += sy;
+                }
+            }
+        }
+    }
+
+    public int[][] getGrid() {
+        return this.grid;
     }
 
     public List<Vertex> getVertexes() {
@@ -275,8 +329,6 @@ public class Level {
     public int getMaxY() {
         return maxY;
     }
-
-
 
 
 }
